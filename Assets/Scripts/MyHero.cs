@@ -13,6 +13,11 @@ public class MyHero : MonoBehaviour
     public float Jump = 8f;
     public float Speed = 5f;
 
+    public LayerMask deathLayer;
+    public GameObject deathPanel;
+    public LayerMask winLayer;
+    public GameObject winPanel;
+
     private Rigidbody2D rb;
     private Animator animator;
     private SpriteRenderer sprite;
@@ -40,11 +45,45 @@ public class MyHero : MonoBehaviour
             moveY += Jump;
         }
         rb.velocity = new Vector2(moveX, moveY);
+
+
+        if (IsTriggeringDeath())
+        {
+            Camera.main.transform.parent = null;
+            deathPanel.SetActive(true);
+            Object.Destroy(gameObject);
+        }
+        else if (IsTriggeringWin())
+        {
+            Camera.main.transform.parent = null;
+            winPanel.SetActive(true);
+            Object.Destroy(gameObject);
+        }
     }
 
     bool IsGrounded()
     {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheckCollider.position, groundCheckRadius, groundLayer);
+        if (colliders.Length > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    bool IsTriggeringDeath()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheckCollider.position, groundCheckRadius, deathLayer);
+        if (colliders.Length > 0)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    bool IsTriggeringWin()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(groundCheckCollider.position, groundCheckRadius, winLayer);
         if (colliders.Length > 0)
         {
             return true;
